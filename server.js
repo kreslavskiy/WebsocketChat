@@ -32,18 +32,20 @@ ws.on('connection', async (connection, req) => {
     for (const client of ws.clients) {
       if (client.readyState !== WebSocket.OPEN) continue;
       if (client === connection) continue;
+      const mail = client.emit('getEmail');
+      //console.log(mail);
 
-      const chat = await getChatController(SENDER_ID, RECIEVER_ID);
+      let chat = await getChatController(SENDER_ID, RECIEVER_ID);
+      console.log(chat);
       if (!chat) {
-        const newChat = await createChatController(SENDER_ID, RECIEVER_ID);
-        await addMessageController(parsedData.message, SENDER_ID, RECIEVER_ID, newChat.id);
-      } else {
-        await addMessageController(parsedData.message, SENDER_ID, RECIEVER_ID, chat.id);
+        chat = await createChatController(SENDER_ID, RECIEVER_ID);
       }
-
+      await addMessageController(parsedData.message, SENDER_ID, RECIEVER_ID, chat.id);
+      
       client.send(parsedData.message, { binary: false });
     }
   });
+
   connection.on('close', () => {
     console.log(`Disconnected ${ip}`);
   });

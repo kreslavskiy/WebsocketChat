@@ -8,7 +8,10 @@ const getChatController = async (sender, reciever) => {
 };
 
 const createChatController = async (sender, reciever) => {
-  return await createChat({ sender, reciever });
+  const rows = await createChat({ sender, reciever }).catch(err => {
+    console.log(err);
+  });
+  return rows;
 };
 
 module.exports = { getChatController, createChatController };

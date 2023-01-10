@@ -40,6 +40,10 @@ socket.addEventListener('message', ({ data }) => {
   writeLine(data);
 });
 
+socket.addEventListener('getEmail', () => {
+  socket.send(SENDER_EMAIL);
+});
+
 userEmail.addEventListener('keydown', (event) => {
   if (event.keyCode === CHAR_RETURN) {
     const sender = userEmail.value;
