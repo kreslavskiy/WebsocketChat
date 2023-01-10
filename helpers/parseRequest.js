@@ -4,7 +4,8 @@ const parseRequest = (stringRequest) => {
   const data = stringRequest.toString().split(',');
   return {
     message: data[0],
-    email: data[1] 
+    sender: data[1],
+    reciever: data[2] 
   }
 };
 

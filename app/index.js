@@ -1,5 +1,6 @@
 const CHAR_RETURN = 13;
-let CURRENT_EMAIL;
+let SENDER_EMAIL;
+let RECIEVER_EMAIL;
   
 const socket = new WebSocket('ws://127.0.0.1:8080/chat');
 const chat = document.getElementById('chat');
@@ -44,10 +45,12 @@ userEmail.addEventListener('keydown', (event) => {
     const sender = userEmail.value;
     const reciever = recieverEmail.value;
     if (sender && reciever) {
-      CURRENT_EMAIL = sender;
+      SENDER_EMAIL = sender;
       userEmail.value = '';
       recieverEmail.value = '';
       showInputMessage();
+    } else {
+      alert('Заполните имейл обоих юзеров')
     }
   }
 });
@@ -57,23 +60,22 @@ recieverEmail.addEventListener('keydown', (event) => {
     const sender = userEmail.value;
     const reciever = recieverEmail.value;
     if (sender && reciever) {
-      CURRENT_EMAIL = sender;
+      SENDER_EMAIL = sender;
+      RECIEVER_EMAIL = reciever;
       userEmail.value = '';
       recieverEmail.value = '';
       showInputMessage();
+    } else {
+      alert('Заполните имейл обоих юзеров')
     }
   }
 });
 
 msg.addEventListener('keydown', (event) => {
   if (event.keyCode === CHAR_RETURN) {
-    if (!CURRENT_EMAIL) {
-      alert('no email');
-      return;
-    }
     const message = msg.value;
     msg.value = '';
     writeLine(message);
-    socket.send(`${message},${CURRENT_EMAIL}`);
+    socket.send(`${message},${SENDER_EMAIL},${RECIEVER_EMAIL}`);
   }
 });
