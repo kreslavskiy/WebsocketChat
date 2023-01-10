@@ -1,0 +1,17 @@
+{
+  "name": "chat",
+  "version": "0.1.4",
+  "author": "Mykhailo Kreslavskyi",
+  "description": "Websocket Chat Example",
+  "license": "MIT",
+  "scripts": {
+    "dev": "nodemon server.js"
+  },
+  "dependencies": {
+    "nodemon": "^2.0.20",
+    "pg": "^8.8.0",
+    "uuid": "^9.0.0",
+    "ws": "^8.11.0"
+  },
+  "readmeFilename": "README.md"
+}
