@@ -21,8 +21,4 @@ const createChat = async (users) => {
   return { id, sender, reciever, date };
 };
 
-createChat({ sender: '781baed3-00e7-442f-a528-f69f6dbf6db5', reciever: 'b7703a63-9b8d-45aa-b027-8a9de5c19619' })
-
 module.exports = { getChat, createChat };
-
-//createChat({sender: '781baed3-00e7-442f-a528-f69f6dbf6db5', reciever: 'a31a2b69-e3e8-402a-9c4b-faeaf73d8596'});

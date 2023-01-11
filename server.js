@@ -5,7 +5,8 @@ const http = require('node:http');
 const WebSocket = require('ws');
 const addMessageController = require('./controllers/messageController.js');
 const { getChatController, createChatController } = require('./controllers/chatController.js');
-const { parseRequest, findReciever } = require('./helpers/utils.js');
+const getUserByEMailController = require('./controllers/userController.js');
+const { parseRequest, findReciever, deleteConnection } = require('./helpers/utils.js');
 
 const index = fs.readFileSync('./app/index.html', 'utf8');
 
@@ -20,10 +21,7 @@ server.listen(8080, () => {
 
 const ws = new WebSocket.Server({ server });
 
-const SENDER_ID = '781baed3-00e7-442f-a528-f69f6dbf6db5';
-const RECIEVER_ID = 'b7703a63-9b8d-45aa-b027-8a9de5c19619';//'a31a2b69-e3e8-402a-9c4b-faeaf73d8596';
 const clients = [];
-
 
 ws.on('connection', async (connection, req) => {
   const ip = req.socket.remoteAddress;
@@ -34,31 +32,24 @@ ws.on('connection', async (connection, req) => {
     console.log('Received: ' + JSON.stringify(parsedData));
 
     if (!parsedData.message) clients.push({ ...parsedData, connection });
+    else {
+      const reciever = findReciever(clients, parsedData.reciever, parsedData.sender);
+      const sender = findReciever(clients, parsedData.sender, parsedData.reciever);
+      const recieverID = await getUserByEMailController(sender.reciever);
+      const senderID = await getUserByEMailController(sender.sender);
 
-    const reciever = findReciever(clients, parsedData.reciever, parsedData.sender);
-    if (reciever) {
-      
-      reciever.send(parsedData.message, { binary: false });
+      let chat = await getChatController(senderID, recieverID);
+      if (!chat) {
+        chat = await createChatController(senderID, recieverID);
+      }
+
+      if (recieverID) await addMessageController(parsedData.message, senderID, recieverID, chat.id);
+      if (reciever) reciever.connection.send(`${sender.sender}: ${parsedData.message}`, { binary: false }); 
     }
-
-      // for (const client of ws.clients) {
-      //   if (client.readyState !== WebSocket.OPEN) continue;
-      //   if (client === connection) continue;
-  
-      //   let chat = await getChatController(SENDER_ID, RECIEVER_ID);
-      //   if (!chat) {
-      //     chat = await createChatController(SENDER_ID, RECIEVER_ID);
-      //   }
-      //   await addMessageController(parsedData.message, SENDER_ID, RECIEVER_ID, chat.id);
-        
-      //   client.send(parsedData.message, { binary: false });
-      // }
-
-
   });
 
   connection.on('close', () => {
+    deleteConnection(clients, connection);
     console.log(`Disconnected ${ip}`);
-    console.log(ws.clients);
   });
 });

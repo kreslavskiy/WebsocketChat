@@ -8,8 +8,14 @@ const parseRequest = (stringRequest) => {
 
 const findReciever = (arrayOfClients, recieverEmail, senderEmail) => {
   for (const client of arrayOfClients) {
-    if (client.reciever === senderEmail && client.sender === recieverEmail) return client.connection;
+    if (client.reciever === senderEmail && client.sender === recieverEmail) return client;
   }
 };
 
-module.exports = { parseRequest, findReciever };
+const deleteConnection = (arrayOfClients, disconnectedClient) => {
+  for (const client of arrayOfClients) {
+    if (client.connection === disconnectedClient) arrayOfClients.splice(arrayOfClients.indexOf(client), 1);
+  }
+};
+
+module.exports = { parseRequest, findReciever, deleteConnection };
