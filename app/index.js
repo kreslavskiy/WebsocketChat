@@ -40,10 +40,6 @@ socket.addEventListener('message', ({ data }) => {
   writeLine(data);
 });
 
-socket.addEventListener('getEmail', () => {
-  socket.send(SENDER_EMAIL);
-});
-
 userEmail.addEventListener('keydown', (event) => {
   if (event.keyCode === CHAR_RETURN) {
     const sender = userEmail.value;
@@ -53,6 +49,7 @@ userEmail.addEventListener('keydown', (event) => {
       userEmail.value = '';
       recieverEmail.value = '';
       showInputMessage();
+      socket.send(`${SENDER_EMAIL},${RECIEVER_EMAIL}`)
     } else {
       alert('Заполните имейл обоих юзеров')
     }
@@ -68,6 +65,7 @@ recieverEmail.addEventListener('keydown', (event) => {
       RECIEVER_EMAIL = reciever;
       userEmail.value = '';
       recieverEmail.value = '';
+      socket.send(`${SENDER_EMAIL},${RECIEVER_EMAIL}`)
       showInputMessage();
     } else {
       alert('Заполните имейл обоих юзеров')
@@ -76,7 +74,7 @@ recieverEmail.addEventListener('keydown', (event) => {
 });
 
 msg.addEventListener('keydown', (event) => {
-  if (event.keyCode === CHAR_RETURN) {
+  if (event.keyCode === CHAR_RETURN && msg.value) {
     const message = msg.value;
     msg.value = '';
     writeLine(message);
